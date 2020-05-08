@@ -12,8 +12,11 @@ import java.util.List;
 @Transactional
 public class SongsServiceImpl implements SongService {
 
-    @Autowired
     SongsDAO songsDAO;
+    @Autowired
+    public SongsServiceImpl(SongsDAO songsDAO) {
+        this.songsDAO = songsDAO;
+    }
 
     @Override
     public List<Songs> listOfSongs() {

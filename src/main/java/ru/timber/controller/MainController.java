@@ -20,14 +20,16 @@ import java.util.List;
 @Controller
 public class MainController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final AlbumService albumService;
+    private final SongService songService;
 
     @Autowired
-    private AlbumService albumService;
-
-    @Autowired
-    private SongService songService;
+    public MainController(UserService userService, AlbumService albumService, SongService songService) {
+        this.userService = userService;
+        this.albumService = albumService;
+        this.songService = songService;
+    }
 
     @GetMapping("/")
     public String welcome() {
