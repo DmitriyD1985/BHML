@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
+
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -30,12 +32,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void add(User user) {
-        userDAO.add(user);
+    public List<Albums> findAlbumsByUser(User user) {
+        return userDAO.findAlbumsByUser(user);
     }
 
     @Override
-    public List<Albums> findAlbumsByUser(User user) {
-        return userDAO.findAlbumsByUser(user);
+    public void insertUser(User user) {
+        userDAO.insertUser(user);
+    }
+
+    @Override
+    public void updateUser(User user) {
+        userDAO.updateUser(user);
+    }
+
+    @Override
+    public void removeUser(User user) {
+        userDAO.delete(user);
     }
 }

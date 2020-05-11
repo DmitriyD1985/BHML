@@ -1,6 +1,9 @@
 package ru.timber.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -30,9 +33,18 @@ public class User {
     @JoinColumn(name = "profID", nullable = false)
     private ProFile userProfile;
 
-    @ManyToMany
+    @ManyToMany(fetch=FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable (name="choisedAlbums",
             joinColumns=@JoinColumn (name="user_id", referencedColumnName = "ID"),
             inverseJoinColumns=@JoinColumn(name="album_id", referencedColumnName = "ID"))
     private List<Albums> userA;
+
+    public void addAlbum(Albums albums) {
+        this.userA.add(albums);
+        albums.getUsers().add(this);
+    }
+
+    public void removeAlbum(Albums albums) {
+            albums.getUsers().remove(this);
+    }
 }

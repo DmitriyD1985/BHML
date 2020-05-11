@@ -21,11 +21,6 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<Albums> getallAlbums() {
-        return albumsDAO.getallAlbums();
-    }
-
-    @Override
     public Albums getByName(String albumName) {
         return albumsDAO.getByName(albumName);
     }
@@ -37,11 +32,21 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public void add(Albums albums) {
-        albumsDAO.add(albums);
+        albumsDAO.insertAlbum(albums);
     }
 
     @Override
     public List<Songs> getSongsByAlbum(String album) {
         return albumsDAO.getSongsByAlbum(album);
+    }
+
+    @Override
+    public void updateAlbum(Albums album) {
+        albumsDAO.updateAlbum(album);
+    }
+
+    @Override
+    public void removeAlbum(Albums album) {
+        albumsDAO.delete(album);
     }
 }

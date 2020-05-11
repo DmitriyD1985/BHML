@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,43 +73,71 @@ public class MainController {
 
     @GetMapping("/dataBaseInitialize")
     public String weldataBaseInitializecome(Model model) {
-        User u = new User();
-        u.setLogin("NewLogin");
-        u.setPassword("password");
-        Albums a = new Albums();
-        a.setAlbumName("NewAlbum");
-        Songs s1= new Songs();
-        Songs s2= new Songs();
-        s1.setSongName("Song1");
-        s2.setSongName("Song2");
+
+        Albums albumForInitialBD = new Albums();
+        albumForInitialBD.setAlbumName("NewAlbum");
+        Songs songOne= new Songs();
+        Songs songTwo= new Songs();
+        songOne.setSongName("Song1");
+        songTwo.setSongName("Song2");
         List<Songs> lisOfSongs = new ArrayList<>();
-        lisOfSongs.add(s1);
-        lisOfSongs.add(s2);
-        a.setSongs(lisOfSongs);
-        List<Albums> listOfAlbums = new ArrayList<>();
-        listOfAlbums.add(a);
-        u.setUserA(listOfAlbums);
+        lisOfSongs.add(songOne);
+        lisOfSongs.add(songTwo);
+        albumForInitialBD.setSongs(lisOfSongs);
+
+        User userForInitialBD = new User();
         ProFile pr = new ProFile();
         pr.setCity("NewCity");
         pr.setCountry("NewCountry");
-        u.setUserProfile(pr);
-        albumService.add(a);
-        userService.add(u);
-        StringBuilder answer = new StringBuilder();
-        answer.append("В базу загружен User - ");
-        answer.append(u.toString());
-        answer.append(" вместе с ним автоматом загружен профаил со связью OneToOne -");
-        answer.append(pr.toString());
-        answer.append("загружен альбом со связью OneToMany - ");
-        answer.append(a.toString());
-        answer.append("С альбомом загружаются 2 песни - ");
-        answer.append(s1.toString());
-        answer.append("и");
-        answer.append(s2.toString());
-        answer.append("При загрузке инициализируется промежуточная таблица для организации связи ManyToMany между User и Albums");
+        userForInitialBD.setLogin("NewLogin");
+        userForInitialBD.setPassword("password");
+        List<Albums> listOfAlbums = new ArrayList<>();
+        listOfAlbums.add(albumForInitialBD);
+        userForInitialBD.setUserA(listOfAlbums);
+        userForInitialBD.setUserProfile(pr);
+        userService.insertUser(userForInitialBD);
 
-        model.addAttribute("msg", answer.toString());
+        String answer = "В базу загружен User - " +
+                userForInitialBD.toString() +
+                " вместе с ним автоматом загружен профаил со связью OneToOne -" +
+                pr.toString() +
+                "загружен альбом со связью OneToMany - " +
+                albumForInitialBD.toString() +
+                "С альбомом загружаются 2 песни - " +
+                songOne.toString() +
+                "и" +
+                songTwo.toString() +
+                "При загрузке инициализируется промежуточная таблица для организации связи ManyToMany между User и Albums";
+        model.addAttribute("msg", answer);
         return "/dbinit";
+    }
+
+    @GetMapping("/deleteAlbum")
+    public String deleteAlbum(Model model) {
+        Albums albumForDelete = albumService.getByName("NewAlbum");
+        albumService.removeAlbum(albumForDelete);
+        String answer = "альбом удален";
+        model.addAttribute("msg", answer);
+        return "/deleteResult";
+    }
+
+    @GetMapping("/deleteUser")
+    public String deleteUser(Model model) {
+        User userForDelete = userService.getByLogin("NewLogin");
+        userService.removeUser(userForDelete);
+        String answer = "Юзер удален";
+        model.addAttribute("msg", answer);
+        return "/deleteResult";
+    }
+
+    @GetMapping("/upload")
+    public String index() {
+        return "upload";
+    }
+
+    @GetMapping("/readCSV")
+    public String readerF() {
+        return "readfile";
     }
 
 }

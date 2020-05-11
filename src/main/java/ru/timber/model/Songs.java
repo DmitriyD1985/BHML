@@ -19,4 +19,17 @@ public class Songs {
 
     @NotBlank(message = "songName is required")
     private String songName;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "album_id")
+    Albums albums;
+
+    @Override
+    public String toString() {
+        return "Songs{" +
+                "id=" + id +
+                ", songName='" + songName + '\'' +
+                ", albums=" + albums +
+                '}';
+    }
 }

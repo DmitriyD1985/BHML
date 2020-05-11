@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
+
 @Component
 @Transactional
 public class AlbumsDAOimpl implements AlbumsDAO {
@@ -18,34 +19,44 @@ public class AlbumsDAOimpl implements AlbumsDAO {
     private EntityManager entityManager;
 
     @Override
-    public List<Albums> getallAlbums() {
-        return entityManager.createNativeQuery("SELECT * FROM musicstore.albums").getResultList();
-    }
-
-    @Override
     public Albums getByName(String albumName) {
-        Query q = entityManager.createQuery("SELECT a FROM Albums a WHERE a.albumName = :album", Albums.class);
-        q.setParameter("album", albumName);
-        return (Albums) q.getSingleResult();
+        Query selectquerry = entityManager.createQuery("SELECT a FROM Albums a WHERE a.albumName = :album", Albums.class);
+        selectquerry.setParameter("album", albumName);
+        return (Albums) selectquerry.getSingleResult();
     }
 
     @Override
     public List<User> getUsersChoisedAlbums(Albums album) {
-        Query q =  entityManager.createQuery("SELECT a FROM Albums a WHERE a.albumName = :album", Albums.class);
-        Albums a = (Albums) q.setParameter("album", album.getAlbumName()).getSingleResult();
-        return a.getUsers();
-    }
-
-    @Override
-    @Transactional
-    public void add(Albums albums) {
-        entityManager.persist(albums);
+        Query selectquerry =  entityManager.createQuery("SELECT a FROM Albums a WHERE a.albumName = :album", Albums.class);
+        Albums albums = (Albums) selectquerry.setParameter("album", album.getAlbumName()).getSingleResult();
+        return albums.getUsers();
     }
 
     @Override
     public List<Songs> getSongsByAlbum(String album) {
-        Query q =  entityManager.createQuery("SELECT a FROM Albums a WHERE a.albumName = :album", Albums.class);
-        Albums a = (Albums) q.setParameter("album", album).getSingleResult();
-        return a.getSongs();
+        Query selectquerry =  entityManager.createQuery("SELECT a FROM Albums a WHERE a.albumName = :album", Albums.class);
+        Albums albums = (Albums) selectquerry.setParameter("album", album).getSingleResult();
+        return albums.getSongs();
+    }
+
+    @Override
+    public void insertAlbum(Albums album) {
+        entityManager.merge(album);
+    }
+
+    @Override
+    public void updateAlbum(Albums album) {
+        Albums updatableAlbum = getByName(album.getAlbumName());
+        updatableAlbum.setAlbumName(album.getAlbumName());
+        entityManager.merge(updatableAlbum);
+    }
+
+    @Override
+    public void delete(Albums albums) {
+        Query selectquerry = entityManager.createQuery("SELECT a FROM Albums a WHERE a.albumName = :albumName", Albums.class);
+        selectquerry.setParameter("albumName", albums.getAlbumName());
+        Albums entity = (Albums) selectquerry.getSingleResult();
+            entity.getUsers().clear();
+            entityManager.remove(entity);
     }
 }

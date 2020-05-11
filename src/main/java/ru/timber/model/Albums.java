@@ -1,10 +1,10 @@
 package ru.timber.model;
 
 import lombok.*;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -21,14 +21,22 @@ public class Albums {
     private String albumName;
 
     @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST},
             mappedBy = "userA")
     private List<User> users;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "album_id", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "albums")
     private List<Songs> songs;
+
+    public void setSongs(List<Songs> songs) {
+        if(songs != null){
+            songs.forEach(a->a.setAlbums(this));
+        }
+        this.songs = songs;
+    }
+
+    public void removeUser(User user) {
+        this.getUsers().remove(user);
+        user.getUserA().remove(this);
+    }
 }
